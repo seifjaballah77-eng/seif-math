@@ -1,0 +1,13 @@
+{
+  "name": "SEIF MATH AI",
+  "short_name": "SEIF MATH",
+  "description": "مختبر الرياضيات الذكي",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090611",
+  "theme_color": "#090611",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
