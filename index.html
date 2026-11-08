@@ -109,7 +109,7 @@ return null;
 function detectOperation(s){const t=s.toLowerCase().replace(/[أإآ]/g,'ا');if(/[ء-ي]/.test(t)){if(/اشتق|مشتق/.test(t))return 'diff';if(/تكامل|كامل/.test(t))return 'integrate';if(/حلل|تحليل/.test(t))return 'factor';if(/بسط|تبسيط/.test(t))return 'simplify';if(/انشر|نشر/.test(t))return 'expand';if(/معادلة|يساوي|حل\s/.test(t)||/=/.test(t))return 'solve';return 'word'}if(/=/.test(t))return 'solve';return 'numeric'}
 
 function solveArabicLongProblem(raw){
- const text=raw.toLowerCase().replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[،؛؟]/g,' ').replace(/\s+/g,' ').trim();
+ const text=raw.toLowerCase().replace(/[أإآ]/g,'ا').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[،؛؟]/g,' ').replace(/\s+/g,' ').trim();
  if(!/[ء-ي]/.test(text))return null;
  const ones={'صفر':0,'واحد':1,'واحدة':1,'احد':1,'احدى':1,'اثنان':2,'اثنين':2,'اثنتان':2,'اثنتين':2,'ثلاث':3,'ثلاثة':3,'ثلاثه':3,'اربعة':4,'اربعه':4,'اربع':4,'خمسة':5,'خمسه':5,'خمس':5,'ستة':6,'سته':6,'ست':6,'سبعة':7,'سبعه':7,'سبع':7,'ثمانية':8,'ثمانيه':8,'ثمان':8,'تسعة':9,'تسعه':9,'تسع':9,'عشرة':10,'عشر':10,'احد عشر':11,'اثنا عشر':12,'اثني عشر':12,'ثلاثة عشر':13,'اربعة عشر':14,'خمسة عشر':15,'ستة عشر':16,'سبعة عشر':17,'ثمانية عشر':18,'تسعة عشر':19,'عشرون':20,'عشرين':20,'ثلاثون':30,'ثلاثين':30,'اربعون':40,'اربعين':40,'خمسون':50,'خمسين':50,'ستون':60,'ستين':60,'سبعون':70,'سبعين':70,'ثمانون':80,'ثمانين':80,'تسعون':90,'تسعين':90,'مئة':100,'مائه':100,'مائة':100,'مئتان':200,'مئتين':200,'الف':1000,'الاف':1000};
  function readNumbers(str){
