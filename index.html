@@ -191,7 +191,7 @@ $('historyClear').onclick=()=>{historyItems=[];localStorage.removeItem('seifMath
 (()=>{
  const win=$('calcWindow'),display=$('calcDisplay'),preview=$('calcPreview'),hist=$('calcHistory');
  let memory=0,items=[],lastAnswer=0;
- const normalize=v=>String(v).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/π/g,'pi').replace(/٪/g,'%');
+ const normalize=v=>String(v).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/π/g,'pi').replace(/٪/g,'%').replace(/(\\d+(?:\\.\\d+)?)%/g,'($1/100)');
  function evaluate(){let raw=normalize(display.value.trim());if(!raw)return null;if(!window.math)throw Error('محرك الحساب غير محمّل');return math.evaluate(raw,{ans:lastAnswer})}
  function refresh(){try{let v=evaluate();preview.textContent=v===null?'جاهزة للحساب':'= '+String(v);preview.style.color=''}catch(e){preview.textContent='أدخل تعبيراً صحيحاً';preview.style.color='#fda4af'}}
  function add(v){if(v==='AC'){display.value='';refresh();display.focus();return}if(v==='⌫'){display.value=display.value.slice(0,-1);refresh();display.focus();return}if(v==='='){calculate();return}display.value+=v;refresh();display.focus()}
