@@ -126,6 +126,28 @@ function solveArabicLongProblem(raw){
   return out;
  }
  const nums=readNumbers(text);if(nums.length<2)return null;
+ // Dedicated patterns: percentages, averages and totals.
+ if(/(?:متوسط|المتوسط|المعدل الحسابي|معدل القيم)/.test(text)&&nums.length>=2){
+  const sum=nums.reduce((a,n)=>a+n.v,0),avg=sum/nums.length;
+  return {answer:String(Number(avg.toFixed(10))),steps:['استخرجنا القيم العددية: '+nums.map(n=>n.v).join('، ')+'.','جمعنا القيم: '+sum+'.','قسمنا المجموع على عدد القيم ('+nums.length+').','المتوسط الحسابي = '+sum+' ÷ '+nums.length+' = '+avg+'.']};
+ }
+ if(/(?:%|بالمئة|بالمائة|في المئة|في المائة|نسبة مئوية)/.test(text)&&nums.length>=2){
+  let pct=nums[0].v,base=nums[1].v;
+  const pIndex=text.search(/(?:%|بالمئة|بالمائة|في المئة|في المائة|نسبة مئوية)/);
+  const firstAt=nums[0].at,secondAt=nums[1].at;
+  if(firstAt>pIndex){pct=nums[1].v;base=nums[0].v}
+  const amount=base*pct/100;
+  if(/(?:خصم|تخفيض)/.test(text)&&/(?:بعد الخصم|السعر النهائي|كم يصبح السعر|كم سيدفع)/.test(text)){
+   const final=base-amount;return {answer:String(Number(final.toFixed(10))),steps:['السعر الأصلي: '+base+'.','نسبة الخصم: '+pct+'%.','قيمة الخصم = '+base+' × '+pct+' ÷ 100 = '+amount+'.','السعر بعد الخصم = '+base+' − '+amount+' = '+final+'.']};
+  }
+  if(/(?:زيادة|اضافة|علاوة)/.test(text)&&/(?:بعد الزيادة|السعر النهائي|كم يصبح)/.test(text)){
+   const final=base+amount;return {answer:String(Number(final.toFixed(10))),steps:['القيمة الأصلية: '+base+'.','نسبة الزيادة: '+pct+'%.','قيمة الزيادة = '+base+' × '+pct+' ÷ 100 = '+amount+'.','القيمة بعد الزيادة = '+base+' + '+amount+' = '+final+'.']};
+  }
+  return {answer:String(Number(amount.toFixed(10))),steps:['القيمة الأساسية: '+base+'.','النسبة المطلوبة: '+pct+'%.','نحسب النسبة: '+base+' × '+pct+' ÷ 100 = '+amount+'.']};
+ }
+ if(/(?:مجموع|اجمع|كم المجموع|المجموع الكلي)/.test(text)&&nums.length>=2&&!/(?:طرح|بقي|متوسط)/.test(text)){
+  const sum=nums.reduce((a,n)=>a+n.v,0);return {answer:String(sum),steps:['استخرجنا القيم المطلوب جمعها: '+nums.map(n=>n.v).join(' + ')+'.','جمعنا القيم المذكورة: '+sum+'.']};
+ }
  const cues=[
   {re:/(?:زائد|اضاف|اضافة|جمع|ربح|كسب|حصل على|استلم|اعطاه|اعطته|تلقى|انضم|زاد|اشترى له)/,op:'+'},
   {re:/(?:ناقص|طرح|خصم|خسر|فقد|انفق|دفع|استهلك|اعطى|اعطت|تبرع|باع|استخدم|صرف|اشترى|اشترت)/,op:'-'},
