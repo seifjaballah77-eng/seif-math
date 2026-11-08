@@ -131,11 +131,12 @@ function solveArabicLongProblem(raw){
   const sum=nums.reduce((a,n)=>a+n.v,0),avg=sum/nums.length;
   return {answer:String(Number(avg.toFixed(10))),steps:['استخرجنا القيم العددية: '+nums.map(n=>n.v).join('، ')+'.','جمعنا القيم: '+sum+'.','قسمنا المجموع على عدد القيم ('+nums.length+').','المتوسط الحسابي = '+sum+' ÷ '+nums.length+' = '+avg+'.']};
  }
+ if(/(?:كم نسبة|ما نسبة|النسبة المئوية ل|نسبة العدد)/.test(text)&&text.includes('من')&&nums.length>=2){const ratio=nums[0].v/nums[1].v*100;return {answer:String(Number(ratio.toFixed(10)))+'%',steps:['القيمة الأولى: '+nums[0].v+'.','القيمة الكلية: '+nums[1].v+'.','النسبة = '+nums[0].v+' ÷ '+nums[1].v+' × 100 = '+ratio+'%.']};}
  if(/(?:%|بالمئة|بالمائة|في المئة|في المائة|نسبة مئوية)/.test(text)&&nums.length>=2){
   let pct=nums[0].v,base=nums[1].v;
   const pIndex=text.search(/(?:%|بالمئة|بالمائة|في المئة|في المائة|نسبة مئوية)/);
-  const firstAt=nums[0].at,secondAt=nums[1].at;
-  if(firstAt>pIndex){pct=nums[1].v;base=nums[0].v}
+  const secondAt=nums[1].at;
+  if(pIndex>secondAt){pct=nums[1].v;base=nums[0].v}
   const amount=base*pct/100;
   if(/(?:خصم|تخفيض)/.test(text)&&/(?:بعد الخصم|السعر النهائي|كم يصبح السعر|كم سيدفع)/.test(text)){
    const final=base-amount;return {answer:String(Number(final.toFixed(10))),steps:['السعر الأصلي: '+base+'.','نسبة الخصم: '+pct+'%.','قيمة الخصم = '+base+' × '+pct+' ÷ 100 = '+amount+'.','السعر بعد الخصم = '+base+' − '+amount+' = '+final+'.']};
