@@ -53,7 +53,7 @@ if(start&&transfer){
 const sender=start[1],initial=countToken(start[2]),receiver=transfer[1],amount=countToken(transfer[3])??countToken(transfer[2]);
 if(initial!=null&&amount!=null&&amount<=initial){
 const left=initial-amount,total=initial;
-return {answer:'سامي/المالك الأول: '+left+' ، '+receiver+': '+amount+' ، المجموع معاً: '+total,steps:['كان لدى '+sender+' في البداية '+initial+' كرات.','أعطى '+sender+' إلى '+receiver+' عدد '+amount+' كرة.','نطرح ما أعطاه من عدد كراته: '+initial+' − '+amount+' = '+left+'.','أصبح لدى '+receiver+' '+amount+' كرة (بافتراض أنه لم تكن لديه كرات قبل ذلك).','نجمع ما لدى الاثنين: '+left+' + '+amount+' = '+total+'. إذن المجموع لم يتغير؛ انتقلت كرة من شخص إلى الآخر.']};
+return {answer:''+sender+': ''+left+' ، '+receiver+': '+amount+' ، المجموع معاً: '+total,steps:['كان لدى '+sender+' في البداية '+initial+' كرات.','أعطى '+sender+' إلى '+receiver+' عدد '+amount+' كرة.','نطرح ما أعطاه من عدد كراته: '+initial+' − '+amount+' = '+left+'.','أصبح لدى '+receiver+' '+amount+' كرة (بافتراض أنه لم تكن لديه كرات قبل ذلك).','نجمع ما لدى الاثنين: '+left+' + '+amount+' = '+total+'. إذن المجموع لم يتغير؛ انتقلت كرة من شخص إلى الآخر.']};
 }
 }
 if(/كم\s+(?:اصبح|أصبح|بقي|تبقى)|المجموع|معا|معاً/.test(t)){
