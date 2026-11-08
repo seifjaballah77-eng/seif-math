@@ -147,7 +147,7 @@ function solveArabicLongProblem(raw){
  const start=nums[0].v;let total=start,steps=['القيمة الابتدائية المستخرجة من نص المسألة هي '+start+'.'],used=0;
  for(let i=1;i<nums.length;i++){
   const pos=text.indexOf(nums[i].word,Math.max(0,nums[i-1].at+nums[i-1].word.length));
-  const context=text.slice(Math.max(0,pos-55),Math.min(text.length,pos+nums[i].word.length+22));
+  const context=text.slice(Math.max(0,pos-55),Math.min(text.length,pos+nums[i].word.length));
   let change=null,opWord='';
   if(/(?:اشترى|اشترت|دفع|انفق|صرف|خسر|فقد|اعطى|اعطت|تبرع|استهلك|استخدم|باع)/.test(context)){change='-';opWord='طرحنا المبلغ أو الكمية التي دفعها أو فقدها'}
   else if(/(?:اضاف|زيادة|زاد|ربح|كسب|استلم|حصل على|تلقى|اعطاه|اعطته|انضم اليه)/.test(context)){change='+';opWord='أضفنا الكمية التي حصل عليها'}
