@@ -65,7 +65,7 @@
  </div>
  <div class="calc-tools">
   <button data-f="sin(">sin</button><button data-f="cos(">cos</button><button data-f="tan(">tan</button><button data-f="log(">log</button><button data-f="sqrt(">√x</button><button data-f="abs(">abs</button>
-  <button data-f="ln(">ln</button><button data-f="asin(">sin⁻¹</button><button data-f="acos(">cos⁻¹</button><button data-f="atan(">tan⁻¹</button><button data-f="!">n!</button><button data-f="sind(">sin°</button><button data-f="cosd(">cos°</button><button data-f="tand(">tan°</button><button id="calcGcd">ق.م.أ</button><button id="calcLcm">م.م.أ</button><button id="calcFactors">العوامل</button><button id="calcDivisors">القواسم</button><button id="calcPrime">أولي؟</button>
+  <button data-f="ln(">ln</button><button data-f="asin(">sin⁻¹</button><button data-f="acos(">cos⁻¹</button><button data-f="atan(">tan⁻¹</button><button data-f="!">n!</button><button data-f="sind(">sin°</button><button data-f="cosd(">cos°</button><button data-f="tand(">tan°</button><button data-f="comb(">nCr</button><button data-f="perm(">nPr</button><button data-f="mean(">المتوسط</button><button data-f="median(">الوسيط</button><button data-f="min(">min</button><button data-f="max(">max</button><button id="calcGcd">ق.م.أ</button><button id="calcLcm">م.م.أ</button><button id="calcFactors">العوامل</button><button id="calcDivisors">القواسم</button><button id="calcPrime">أولي؟</button>
   <button id="calcMemSave">MS</button><button id="calcMemRecall">MR</button><button id="calcMemClear">MC</button><button id="calcCopy">نسخ</button>
  </div>
  <div class="calc-history" id="calcHistory">السجل: لا توجد عمليات بعد.</div>
@@ -190,18 +190,18 @@ $('historyClear').onclick=()=>{historyItems=[];localStorage.removeItem('seifMath
 /* Calculator: available above every section */
 (()=>{
  const win=$('calcWindow'),display=$('calcDisplay'),preview=$('calcPreview'),hist=$('calcHistory');
- let memory=0,items=[],lastAnswer=0;
+ let memory=Number(localStorage.getItem('seifCalcMemory')||0),items=JSON.parse(localStorage.getItem('seifCalcHistory')||'[]'),lastAnswer=0;hist.textContent=items.length?'السجل: '+items.join(' | '):'السجل: لا توجد عمليات بعد.';
  const normalize=v=>String(v).replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/π/g,'pi').replace(/٪/g,'%').replace(/(\d+(?:\.\d+)?)%/g,'($1/100)');
  function evaluate(){let raw=normalize(display.value.trim());if(!raw)return null;if(!window.math)throw Error('محرك الحساب غير محمّل');return math.evaluate(raw,{ans:lastAnswer,sind:x=>Math.sin(Number(x)*Math.PI/180),cosd:x=>Math.cos(Number(x)*Math.PI/180),tand:x=>Math.tan(Number(x)*Math.PI/180),asind:x=>Math.asin(Number(x))*180/Math.PI,acosd:x=>Math.acos(Number(x))*180/Math.PI,atand:x=>Math.atan(Number(x))*180/Math.PI})}
  function refresh(){try{let v=evaluate();preview.textContent=v===null?'جاهزة للحساب':'= '+String(v);preview.style.color=''}catch(e){preview.textContent='أدخل تعبيراً صحيحاً';preview.style.color='#fda4af'}}
  function add(v){if(v==='AC'){display.value='';refresh();display.focus();return}if(v==='⌫'){display.value=display.value.slice(0,-1);refresh();display.focus();return}if(v==='='){calculate();return}if(v==='±'){let x=display.value.trim();if(!x)display.value='-';else if(/^\(-.*\)$/.test(x))display.value=x.slice(2,-1);else display.value='-('+x+')';refresh();display.focus();return}if(v==='ans'){display.value+='ans';refresh();display.focus();return}display.value+=v;refresh();display.focus()}
- function calculate(){try{let expression=display.value,result=evaluate();if(result===null)return;lastAnswer=result;items.unshift(expression+' = '+String(result));items=items.slice(0,8);hist.textContent='السجل: '+items.join('  |  ');display.value=String(result);preview.textContent='تم الحساب بنجاح';saveHistory('الآلة الحاسبة: '+expression,String(result))}catch(e){preview.textContent='خطأ: '+e.message;preview.style.color='#fda4af'}}
+ function calculate(){try{let expression=display.value,result=evaluate();if(result===null)return;lastAnswer=result;items.unshift(expression+' = '+String(result));items=items.slice(0,12);localStorage.setItem('seifCalcHistory',JSON.stringify(items));hist.textContent='السجل: '+items.join('  |  ');display.value=String(result);preview.textContent='تم الحساب بنجاح';saveHistory('الآلة الحاسبة: '+expression,String(result))}catch(e){preview.textContent='خطأ: '+e.message;preview.style.color='#fda4af'}}
  $('calcLaunch').onclick=()=>win.classList.toggle('open');$('calcClose').onclick=$('calcMin').onclick=()=>win.classList.remove('open');
  $('calcKeys').addEventListener('click',e=>{let b=e.target.closest('[data-c]');if(b)add(b.dataset.c)});
  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{let f=b.dataset.f;if(f==='!')display.value+='!';else display.value+=f;refresh();display.focus()});
  display.addEventListener('input',refresh);display.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key==='='){e.preventDefault();calculate()}if(e.key==='Escape'){display.value='';refresh()}});
- $('calcMemSave').onclick=()=>{try{memory=Number(evaluate());preview.textContent='حُفظت القيمة في الذاكرة'}catch(e){preview.textContent='لا توجد قيمة صالحة للحفظ'}};
- $('calcMemRecall').onclick=()=>{display.value+=String(memory);refresh()};$('calcMemClear').onclick=()=>{memory=0;preview.textContent='تم تصفير الذاكرة'};
+ $('calcMemSave').onclick=()=>{try{memory=Number(evaluate());localStorage.setItem('seifCalcMemory',String(memory));preview.textContent='حُفظت القيمة في الذاكرة'}catch(e){preview.textContent='لا توجد قيمة صالحة للحفظ'}};
+ $('calcMemRecall').onclick=()=>{display.value+=String(memory);refresh()};$('calcMemClear').onclick=()=>{memory=0;localStorage.removeItem('seifCalcMemory');preview.textContent='تم تصفير الذاكرة'};
  $('calcCopy').onclick=()=>{if(display.value)navigator.clipboard?.writeText(display.value).then(()=>preview.textContent='تم النسخ').catch(()=>preview.textContent='تعذر النسخ')};
  function gcd(a,b){a=Math.abs(Math.trunc(a));b=Math.abs(Math.trunc(b));while(b)[a,b]=[b,a%b];return a}
  function singleInt(){let n=Number(display.value.trim());if(!Number.isSafeInteger(n)||n<1)throw Error('أدخل عدداً صحيحاً موجباً.');return n}
@@ -212,9 +212,9 @@ $('historyClear').onclick=()=>{historyItems=[];localStorage.removeItem('seifMath
  function twoInts(){let p=display.value.split(/[;,\s]+/).filter(Boolean).map(Number);if(p.length!==2||p.some(x=>!Number.isInteger(x)))throw Error('اكتب عددين صحيحين مفصولين بمسافة، مثل 24 18');return p}
  $('calcGcd').onclick=()=>{try{let [a,b]=twoInts();display.value=String(gcd(a,b));refresh()}catch(e){preview.textContent=e.message}};
  $('calcLcm').onclick=()=>{try{let [a,b]=twoInts(),g=gcd(a,b);display.value=String(g?Math.abs(a*b)/g:0);refresh()}catch(e){preview.textContent=e.message}};
- const drag=$('calcDrag');let dragging=false,ox=0,oy=0;
+ const drag=$('calcDrag');let dragging=false,ox=0,oy=0;try{const pos=JSON.parse(localStorage.getItem('seifCalcPosition')||'null');if(pos&&Number.isFinite(pos.left)&&Number.isFinite(pos.top)){win.style.left=Math.max(4,Math.min(innerWidth-win.offsetWidth-4,pos.left))+'px';win.style.top=Math.max(4,Math.min(innerHeight-win.offsetHeight-4,pos.top))+'px';win.style.bottom='auto'}}catch(e){}
  drag.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;dragging=true;let r=win.getBoundingClientRect();ox=e.clientX-r.left;oy=e.clientY-r.top;drag.setPointerCapture(e.pointerId)});
  drag.addEventListener('pointermove',e=>{if(!dragging)return;win.style.left=Math.max(4,Math.min(innerWidth-win.offsetWidth-4,e.clientX-ox))+'px';win.style.top=Math.max(4,Math.min(innerHeight-win.offsetHeight-4,e.clientY-oy))+'px';win.style.bottom='auto'});
- drag.addEventListener('pointerup',()=>dragging=false);drag.addEventListener('pointercancel',()=>dragging=false);
+ drag.addEventListener('pointerup',()=>{dragging=false;try{const r=win.getBoundingClientRect();localStorage.setItem('seifCalcPosition',JSON.stringify({left:r.left,top:r.top}))}catch(e){}});drag.addEventListener('pointercancel',()=>dragging=false);
 })();
 </script><script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}</script></body></html>
