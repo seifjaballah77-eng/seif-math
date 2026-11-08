@@ -116,10 +116,12 @@ function solveArabicLongProblem(raw){
   const words=str.match(/[ء-ي]+|\d+(?:\.\d+)?/g)||[],out=[];
   for(let i=0;i<words.length;i++){
    if(/^\d/.test(words[i])){out.push({v:Number(words[i]),word:words[i],at:str.indexOf(words[i])});continue}
-   const pair=words[i]+' '+(words[i+1]||'');
+   const current=words[i].startsWith('و')&&ones[words[i].slice(1)]!=null?words[i].slice(1):words[i];
+   const next=(words[i+1]||'').startsWith('و')&&(ones[(words[i+1]||'').slice(1)]!=null)?words[i+1].slice(1):(words[i+1]||'');
+   const pair=current+' '+next;
    if(ones[pair]!=null){out.push({v:ones[pair],word:pair,at:str.indexOf(pair)});i++;continue}
-   if(ones[words[i]]!=null){out.push({v:ones[words[i]],word:words[i],at:str.indexOf(words[i])});continue}
-   if(words[i]==='خمسة'&&words[i+1]==='وعشرون'){out.push({v:25,word:'خمسة وعشرون',at:str.indexOf('خمسة وعشرون')});i++}
+   if(ones[current]!=null){out.push({v:ones[current],word:current,at:str.indexOf(words[i])});continue}
+   if(current==='خمسة'&&words[i+1]==='وعشرون'){out.push({v:25,word:'خمسة وعشرون',at:str.indexOf('خمسة وعشرون')});i++}
   }
   return out;
  }
